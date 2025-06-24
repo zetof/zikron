@@ -1,9 +1,7 @@
 import rtmidi
-from threading import Thread
-from time import sleep
 
 
-class LPD8(Thread):
+class LPD8():
     NAME = 'LPD8'
     DELAY = 1
     NOTE_ON = 143
@@ -15,8 +13,6 @@ class LPD8(Thread):
         self._start_stop = start_stop
         self._send = send
         self._tempo = tempo
-        self._delay = self.DELAY / 1000
-        self.connect()
 
     def _get_midi_device(self, devices_list):
         midi_device = None
@@ -30,35 +26,23 @@ class LPD8(Thread):
                 index += 1
         return midi_device
 
-    def _read_midi(self):
+    def read_midi(self):
         msg = self._midi_in.get_message()
         if msg is not None:
             cmd = msg[0][0]
             ctrl = msg[0][1]
             if cmd == self._cmd and ctrl == self._start_stop:
-                print("START / STOP")
-            elif cmd == self._cmd and ctrl == self._send:
-                print("SEND")
-            elif cmd == self._ctrl and ctrl == self._tempo:
-                print("TEMPO: {}".format(msg[0][2]))
-
-    def run(self):
-        while self._running:
-            self._read_midi()
-            sleep(self._delay)
-
-    def stop(self):
-        self._running = False
-
-    def is_running(self):
-        return self._running
+                return 1, 0
+            if cmd == self._cmd and ctrl == self._send:
+                return 2, 0
+            if cmd == self._ctrl and ctrl == self._tempo:
+                return 3, msg[0][2]
+        return False, 0
 
     def connect(self):
         self._midi_in = self._get_midi_device(rtmidi.MidiIn())
         self._midi_out = self._get_midi_device(rtmidi.MidiOut())
         if self._midi_in is not None and self._midi_out is not None:
-            self._running = True
-        else:
-            self._running = False
-            print("*** No LPD8 Controller found ***")
-        Thread.__init__(self)
+            return True
+        print("*** No LPD8 Controller found ***")
+        return False
