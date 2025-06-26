@@ -1,11 +1,12 @@
 from curses import wrapper
 from time import sleep
 from lpd8 import LPD8
+from digits import Digits
 
 
 def set_bpm(stdscr, val):
     bpm = 40 + int(260 * val / 127)
-    stdscr.addstr(0, 0, str(bpm))
+    Digits.print_number(stdscr, 2, 2, bpm, 3)
 
 
 def main(stdscr):
@@ -17,6 +18,7 @@ def main(stdscr):
 
     stdscr.nodelay(True)
 
+    digits = Digits()
     while looping:
         try:
             key = str(stdscr.getkey())
