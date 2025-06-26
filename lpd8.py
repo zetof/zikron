@@ -41,8 +41,8 @@ class LPD8():
 
     def connect(self):
         self._midi_in = self._get_midi_device(rtmidi.MidiIn())
-        self._midi_out = self._get_midi_device(rtmidi.MidiOut())
-        if self._midi_in is not None and self._midi_out is not None:
+        # self._midi_out = self._get_midi_device(rtmidi.MidiOut())
+        if self._midi_in is not None:
             return True
         print("*** No LPD8 Controller found ***")
         return False

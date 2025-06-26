@@ -1,5 +1,8 @@
+import curses
+
+
 class Digits():
-    def print_number(stdscr, line, col, number, digits):
+    def print_number(stdscr, line, col, color, number, digits):
         DIGITS = [
             [[0, 1, 3],
              [1, 0, 1], [1, 4, 1],
@@ -62,5 +65,6 @@ class Digits():
             for digit in DIGITS[index]:
                 stdscr.addstr(line + digit[0],
                               col + i + digit[1],
-                              "O" * digit[2])
+                              "o" * digit[2],
+                              curses.color_pair(1))
             i += 6
