@@ -21,6 +21,9 @@ def main(stdscr):
     curses.curs_set(0)
     curses.init_pair(1, 86, 0)
 
+    lpd8 = LPD8()
+    lpd8.create_ports()
+
     digits = Digits()
     while looping:
         try:
@@ -39,6 +42,4 @@ def main(stdscr):
         sleep(delay)
 
 
-lpd8 = LPD8()
-if lpd8.connect():
-    wrapper(main)
+wrapper(main)

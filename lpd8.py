@@ -14,18 +14,6 @@ class LPD8():
         self._send = send
         self._tempo = tempo
 
-    def _get_midi_device(self, devices_list):
-        midi_device = None
-        midi_ports = devices_list.get_ports()
-        if len(midi_ports) != 0:
-            index = 0
-            for name in midi_ports:
-                if name.find(self.NAME) != -1:
-                    devices_list.open_port(index)
-                    midi_device = devices_list
-                index += 1
-        return midi_device
-
     def read_midi(self):
         msg = self._midi_in.get_message()
         if msg is not None:
@@ -39,10 +27,8 @@ class LPD8():
                 return 3, msg[0][2]
         return False, 0
 
-    def connect(self):
-        self._midi_in = self._get_midi_device(rtmidi.MidiIn())
-        # self._midi_out = self._get_midi_device(rtmidi.MidiOut())
-        if self._midi_in is not None:
-            return True
-        print("*** No LPD8 Controller found ***")
-        return False
+    def create_ports(self):
+        midi_in = rtmidi.MidiIn()
+        midi_out = rtmidi.MidiOut()
+        self._midi_in = midi_in.open_virtual_port("zikron_input")
+        self._midi_out = midi_out.open_virtual_port("zikron_clock")
