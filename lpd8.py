@@ -27,8 +27,6 @@ class LPD8():
                 return 3, msg[0][2]
         return False, 0
 
-    def create_ports(self):
+    def create_virtual_port(self):
         midi_in = rtmidi.MidiIn()
-        midi_out = rtmidi.MidiOut()
         self._midi_in = midi_in.open_virtual_port("zikron_input")
-        self._midi_out = midi_out.open_virtual_port("zikron_clock")

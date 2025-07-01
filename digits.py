@@ -65,6 +65,6 @@ class Digits():
             for digit in DIGITS[index]:
                 stdscr.addstr(line + digit[0],
                               col + i + digit[1],
-                              "o" * digit[2],
-                              curses.color_pair(1))
+                              "O" * digit[2],
+                              curses.color_pair(color))
             i += 6

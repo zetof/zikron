@@ -2,43 +2,52 @@ import curses
 from curses import wrapper
 from time import sleep
 from lpd8 import LPD8
+from clock import Clock
 from digits import Digits
 
 
 def set_bpm(stdscr, val):
-    bpm = 40 + int(254 * val / 127)
+    bpm = 20 + 2 * val
     Digits.print_number(stdscr, 2, 2, 1, bpm, 3)
+    return bpm
 
 
 def main(stdscr):
     delay = .001
-    looping = True
-    running = False
+    running = True
     sending = True
-    bpm = 0
+    bpm = 120
 
     stdscr.nodelay(True)
     curses.curs_set(0)
     curses.init_pair(1, 86, 0)
+    curses.init_pair(2, 100, 100)
 
     lpd8 = LPD8()
-    lpd8.create_ports()
+    lpd8.create_virtual_port()
 
-    digits = Digits()
-    while looping:
+    clock = Clock(stdscr, 120, 3, 22, 1)
+    clock.create_virtual_port()
+    clock.start()
+
+    Digits.print_number(stdscr, 2, 2, 1, bpm, 3)
+
+    while running:
         try:
             key = str(stdscr.getkey())
             if key == 'q':
-                looping = False
+                clock.stop()
+                running = False
         except Exception:
             cmd, val = lpd8.read_midi()
             match cmd:
                 case 1:
-                    running = not running
+                    clock.change_looping()
                 case 2:
                     sending = not sending
                 case 3:
                     bpm = set_bpm(stdscr, val)
+                    clock.set_bpm(bpm)
         sleep(delay)
 
 
