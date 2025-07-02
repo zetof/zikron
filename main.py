@@ -26,7 +26,7 @@ def main(stdscr):
     lpd8 = LPD8()
     lpd8.create_virtual_port()
 
-    clock = Clock(stdscr, 120, 3, 22, 2)
+    clock = Clock(stdscr, 120, 2, 20, 2)
     clock.create_virtual_port()
     clock.start()
 

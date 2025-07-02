@@ -7,30 +7,22 @@ from time import sleep
 class Clock(Thread):
 
     _TEMPO = [
-        [[0, -1, 1],
-         [0, 1, 1],
-         [0, 3, 1]],
-        [[0, 1, 1],
-         [0, 3, 1],
-         [1, 3, 1]],
-        [[0, 3, 1],
-         [1, 3, 1],
-         [2, 3, 1]],
-        [[1, 3, 1],
-         [2, 3, 1],
-         [2, 1, 1]],
-        [[2, -1, 1],
-         [2, 1, 1],
-         [2, 3, 1]],
-        [[2, 1, 1],
-         [2, -1, 1],
-         [1, -1, 1]],
-        [[0, -1, 1],
-         [1, -1, 1],
-         [2, -1, 1]],
-        [[0, -1, 1],
-         [0, 1, 1],
-         [1, -1, 1]]
+        [['O O O O O'], ['         '], ['         '], ['         '], ['         ']],
+        [['  O O O O'], ['        O'], ['         '], ['         '], ['         ']],
+        [['    O O O'], ['        O'], ['        O'], ['         '], ['         ']],
+        [['      O O'], ['        O'], ['        O'], ['        O'], ['         ']],
+        [['        O'], ['        O'], ['        O'], ['        O'], ['        O']],
+        [['         '], ['        O'], ['        O'], ['        O'], ['      O O']],
+        [['         '], ['         '], ['        O'], ['        O'], ['    O O O']],
+        [['         '], ['         '], ['         '], ['        O'], ['  O O O O']],
+        [['         '], ['         '], ['         '], ['         '], ['O O O O O']],
+        [['         '], ['         '], ['         '], ['O        '], ['O O O O  ']],
+        [['         '], ['         '], ['O        '], ['O        '], ['O O O    ']],
+        [['         '], ['O        '], ['O        '], ['O        '], ['O O      ']],
+        [['O        '], ['O        '], ['O        '], ['O        '], ['O        ']],
+        [['O O      '], ['O        '], ['O        '], ['O        '], ['         ']],
+        [['O O O    '], ['O        '], ['O        '], ['         '], ['         ']],
+        [['O O O O  '], ['O        '], ['         '], ['         '], ['         ']]
     ]
 
     def __init__(self, stdscr, bpm, line, col, color):
@@ -50,17 +42,10 @@ class Clock(Thread):
         return 2.5 / bpm
 
     def _print_tempo(self, index):
-        for i in range(0, 3):
-            if index == 0:
-                self._stdscr.addstr(self._line + i, self._col - 1, " " * 5)
-            else:
-                self._stdscr.addstr(self._line + i,
-                                    self._col - 1,
-                                    " " * 5)
-        for tempo in self._TEMPO[index]:
-            self._stdscr.addstr(self._line + tempo[0],
-                                self._col + tempo[1],
-                                "O" * tempo[2],
+        for i, tempo in enumerate(self._TEMPO[index]):
+            self._stdscr.addstr(self._line + i,
+                                self._col,
+                                tempo[0],
                                 curses.color_pair(self._color))
 
     def set_bpm(self, bpm):
@@ -81,8 +66,7 @@ class Clock(Thread):
                 self._step += 1
                 if self._step > 23:
                     self._step = 0
-                if self._step % 3 == 0:
-                    self._print_tempo(int(self._step / 3))
+                self._print_tempo(int(self._step / 1.5))
             sleep(self._delay)
 
     def stop(self):
@@ -90,5 +74,5 @@ class Clock(Thread):
 
     def create_virtual_port(self):
         midi_out = rtmidi.MidiOut()
-        self._midi_out = midi_out.open_virtual_port("zikron_clock")
+        self._midi_out = midi_out.open_virtual_port('zikron_clock')
         self._midi_out.send_message([0xfc])
