@@ -7,22 +7,51 @@ from time import sleep
 class Clock(Thread):
 
     _TEMPO = [
-        [['O O O O O'], ['         '], ['         '], ['         '], ['         ']],
-        [['  O O O O'], ['        O'], ['         '], ['         '], ['         ']],
-        [['    O O O'], ['        O'], ['        O'], ['         '], ['         ']],
-        [['      O O'], ['        O'], ['        O'], ['        O'], ['         ']],
-        [['        O'], ['        O'], ['        O'], ['        O'], ['        O']],
-        [['         '], ['        O'], ['        O'], ['        O'], ['      O O']],
-        [['         '], ['         '], ['        O'], ['        O'], ['    O O O']],
-        [['         '], ['         '], ['         '], ['        O'], ['  O O O O']],
-        [['         '], ['         '], ['         '], ['         '], ['O O O O O']],
-        [['         '], ['         '], ['         '], ['O        '], ['O O O O  ']],
-        [['         '], ['         '], ['O        '], ['O        '], ['O O O    ']],
-        [['         '], ['O        '], ['O        '], ['O        '], ['O O      ']],
-        [['O        '], ['O        '], ['O        '], ['O        '], ['O        ']],
-        [['O O      '], ['O        '], ['O        '], ['O        '], ['         ']],
-        [['O O O    '], ['O        '], ['O        '], ['         '], ['         ']],
-        [['O O O O  '], ['O        '], ['         '], ['         '], ['         ']]
+        [['O O O O 0'],
+         ['O       O'],
+         ['O   0   O'],
+         ['O       O'],
+         ['O O O O O']],
+        [['O O O O O'],
+         ['         '],
+         ['    1    '],
+         ['         '],
+         ['         ']],
+        [['    O O O'],
+         ['        O'],
+         ['    1   O'],
+         ['         '],
+         ['         ']],
+        [['        O'],
+         ['        O'],
+         ['    2   O'],
+         ['        O'],
+         ['        O']],
+        [['         '],
+         ['         '],
+         ['    2   O'],
+         ['        O'],
+         ['    O O O']],
+        [['         '],
+         ['         '],
+         ['    3    '],
+         ['         '],
+         ['O O O O O']],
+        [['         '],
+         ['         '],
+         ['O   3    '],
+         ['O        '],
+         ['O O O    ']],
+        [['O        '],
+         ['O        '],
+         ['O   4    '],
+         ['O        '],
+         ['O        ']],
+        [['O O O    '],
+         ['O        '],
+         ['O   4    '],
+         ['         '],
+         ['         ']]
     ]
 
     def __init__(self, stdscr, bpm, line, col, color):
@@ -35,18 +64,19 @@ class Clock(Thread):
         self._step = 0
         self._running = True
         self._looping = False
-        self._print_tempo(0)
+        self._print_tempo(-3)
         Thread.__init__(self)
 
     def _set_delay(self, bpm):
         return 2.5 / bpm
 
     def _print_tempo(self, index):
-        for i, tempo in enumerate(self._TEMPO[index]):
-            self._stdscr.addstr(self._line + i,
-                                self._col,
-                                tempo[0],
-                                curses.color_pair(self._color))
+        if index % 3 == 0:
+            for i, tempo in enumerate(self._TEMPO[int(index / 3) + 1]):
+                self._stdscr.addstr(self._line + i,
+                                    self._col,
+                                    tempo[0],
+                                    curses.color_pair(self._color))
 
     def set_bpm(self, bpm):
         self._bpm = bpm
@@ -66,7 +96,7 @@ class Clock(Thread):
                 self._step += 1
                 if self._step > 23:
                     self._step = 0
-                self._print_tempo(int(self._step / 1.5))
+                self._print_tempo(self._step)
             sleep(self._delay)
 
     def stop(self):
