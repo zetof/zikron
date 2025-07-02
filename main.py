@@ -20,13 +20,13 @@ def main(stdscr):
 
     stdscr.nodelay(True)
     curses.curs_set(0)
-    curses.init_pair(1, 86, 0)
-    curses.init_pair(2, 100, 100)
+    curses.init_pair(1, 227, 0)
+    curses.init_pair(2, 119, 0)
 
     lpd8 = LPD8()
     lpd8.create_virtual_port()
 
-    clock = Clock(stdscr, 120, 3, 22, 1)
+    clock = Clock(stdscr, 120, 3, 22, 2)
     clock.create_virtual_port()
     clock.start()
 
