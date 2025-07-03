@@ -57,7 +57,10 @@ class Digits():
         ]
 
         for i in range(0, 5):
-            stdscr.addstr(line + i, col, " " * (5 + 6 * (digits - 1)))
+            stdscr.addstr(line + i,
+                          col,
+                          " " * (5 + 6 * (digits - 1)),
+                          curses.color_pair(color))
         string = str(number)
         i = 0
         for char in string:

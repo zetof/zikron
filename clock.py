@@ -83,9 +83,10 @@ class Clock(Thread):
                                     string,
                                     curses.color_pair(self._color))
 
-    def set_bpm(self, bpm):
-        self._bpm = bpm
-        self._delay = self._set_delay(bpm)
+    def set_bpm(self, hold, bpm):
+        if not hold:
+            self._bpm = bpm
+            self._delay = self._set_delay(bpm)
 
     def change_looping(self):
         if self._looping:
@@ -96,6 +97,12 @@ class Clock(Thread):
             else:
                 self._midi_out.send_message([0xfb])
         self._looping = not self._looping
+
+    def rewind(self):
+        self._step = 0
+        self._beat = 1
+        self._midi_out.send_message([0xfa])
+        self._looping = True
 
     def run(self):
         while self._running:
