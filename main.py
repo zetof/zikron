@@ -52,8 +52,8 @@ def main(stdscr):
                 case 3:
                     hold = not hold
                     color = 1 if not hold else 2
-                    clock.set_bpm(hold, bpm)
                     Digits.print_number(stdscr, 2, 2, color, bpm, 3)
+                    clock.set_bpm(hold, bpm)
                 case 4:
                     val_c = val
                     bpm = set_bpm(stdscr, hold, val_c, val_f)

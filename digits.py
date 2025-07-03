@@ -62,6 +62,8 @@ class Digits():
                           " " * (5 + 6 * (digits - 1)),
                           curses.color_pair(color))
         string = str(number)
+        string = "0" * (digits - len(string)) + string
+
         i = 0
         for char in string:
             index = int(char)
