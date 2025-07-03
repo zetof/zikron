@@ -6,8 +6,8 @@ from clock import Clock
 from digits import Digits
 
 
-def set_bpm(stdscr, val):
-    bpm = 20 + 2 * val
+def set_bpm(stdscr, val_c, val_f):
+    bpm = 30 + int(262 * val_c / 127 + 8 * val_f / 127)
     Digits.print_number(stdscr, 2, 2, 1, bpm, 3)
     return bpm
 
@@ -16,7 +16,8 @@ def main(stdscr):
     delay = .001
     running = True
     sending = True
-    bpm = 120
+    val_c = 64
+    val_f = 64
 
     stdscr.nodelay(True)
     curses.curs_set(0)
@@ -30,6 +31,7 @@ def main(stdscr):
     clock.create_virtual_port()
     clock.start()
 
+    bpm = set_bpm(stdscr, val_c, val_f)
     Digits.print_number(stdscr, 2, 2, 1, bpm, 3)
 
     while running:
@@ -46,7 +48,12 @@ def main(stdscr):
                 case 2:
                     sending = not sending
                 case 3:
-                    bpm = set_bpm(stdscr, val)
+                    val_c = val
+                    bpm = set_bpm(stdscr, val_c, val_f)
+                    clock.set_bpm(bpm)
+                case 4:
+                    val_f = val
+                    bpm = set_bpm(stdscr, val_c, val_f)
                     clock.set_bpm(bpm)
         sleep(delay)
 

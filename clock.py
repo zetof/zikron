@@ -14,42 +14,42 @@ class Clock(Thread):
          ['O O O O O']],
         [['O O O O O'],
          ['         '],
-         ['    1    '],
+         ['    {}    '],
          ['         '],
          ['         ']],
         [['    O O O'],
          ['        O'],
-         ['    1   O'],
+         ['    {}   O'],
          ['         '],
          ['         ']],
         [['        O'],
          ['        O'],
-         ['    2   O'],
+         ['    {}   O'],
          ['        O'],
          ['        O']],
         [['         '],
          ['         '],
-         ['    2   O'],
+         ['    {}   O'],
          ['        O'],
          ['    O O O']],
         [['         '],
          ['         '],
-         ['    3    '],
+         ['    {}    '],
          ['         '],
          ['O O O O O']],
         [['         '],
          ['         '],
-         ['O   3    '],
+         ['O   {}    '],
          ['O        '],
          ['O O O    ']],
         [['O        '],
          ['O        '],
-         ['O   4    '],
+         ['O   {}    '],
          ['O        '],
          ['O        ']],
         [['O O O    '],
          ['O        '],
-         ['O   4    '],
+         ['O   {}    '],
          ['         '],
          ['         ']]
     ]
@@ -62,6 +62,7 @@ class Clock(Thread):
         self._col = col
         self._color = color
         self._step = 0
+        self._beat = 1
         self._running = True
         self._looping = False
         self._print_tempo(-3)
@@ -73,9 +74,13 @@ class Clock(Thread):
     def _print_tempo(self, index):
         if index % 3 == 0:
             for i, tempo in enumerate(self._TEMPO[int(index / 3) + 1]):
+                if i == 2:
+                    string = tempo[0].format(self._beat)
+                else:
+                    string = tempo[0]
                 self._stdscr.addstr(self._line + i,
                                     self._col,
-                                    tempo[0],
+                                    string,
                                     curses.color_pair(self._color))
 
     def set_bpm(self, bpm):
@@ -86,7 +91,10 @@ class Clock(Thread):
         if self._looping:
             self._midi_out.send_message([0xfc])
         else:
-            self._midi_out.send_message([0xfb])
+            if self._beat == 0 and self._step == 0:
+                self._midi_out.send_message([0xfa])
+            else:
+                self._midi_out.send_message([0xfb])
         self._looping = not self._looping
 
     def run(self):
@@ -96,6 +104,9 @@ class Clock(Thread):
                 self._step += 1
                 if self._step > 23:
                     self._step = 0
+                    self._beat += 1
+                    if self._beat > 4:
+                        self._beat = 1
                 self._print_tempo(self._step)
             sleep(self._delay)
 
